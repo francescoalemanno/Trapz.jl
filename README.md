@@ -2,6 +2,11 @@
 
 A simple Julia package to perform trapezoidal integration over common Julia arrays. 
 
+the package is not registered on Julia Registry, so it can only be added as follows
+```julia
+import Pkg; Pkg.add("https://github.com/francescoalemanno/Trapz.jl")
+```
+
 ## Example Usage:
 
 
