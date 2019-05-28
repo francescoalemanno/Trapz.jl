@@ -4,7 +4,7 @@ A simple Julia package to perform trapezoidal integration over common Julia arra
 
 the package is not registered on Julia Registry, so it can only be added as follows
 ```julia
-import Pkg; Pkg.add("https://github.com/francescoalemanno/Trapz.jl")
+import Pkg; Pkg.pkg"add https://github.com/francescoalemanno/Trapz.jl"
 ```
 
 ## Example Usage:
@@ -98,24 +98,18 @@ This code is optimized in order to perform the integral the fastest over the las
       samples:          82
       evals/sample:     1
 
-At the moment of writing this function when used correctly is faster than numpy's equivalent function.
+At the time of writing this function when used correctly is faster than numpy's equivalent function.
 
 ```python
 %%timeit
 np.trapz(np.trapz(np.trapz(M,x,axis=0),y,axis=0),z,axis=0)
 ```
-
     59.3 ms ± 1.45 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
-
 ```python
 %%timeit
 np.trapz(np.trapz(np.trapz(M,z,axis=2),y,axis=1),x,axis=0)
 ```
-
     74.7 ms ± 1.5 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
-
-
-
 ```python
 
 ```
