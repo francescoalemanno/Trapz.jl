@@ -97,9 +97,9 @@ This code is optimized in order to perform the integral the fastest over the las
       --------------
       samples:          82
       evals/sample:     1
-
+## Comparison to Numpy trapz
 At the time of writing this function when used correctly is faster than numpy's equivalent function.
-
+Indeed the timings for Anaconda Python 3.7.3 with Numpy 1.16.2 on the same machine with same initial conditions on M,x,y,z are:
 ```python
 %%timeit
 np.trapz(np.trapz(np.trapz(M,x,axis=0),y,axis=0),z,axis=0)
