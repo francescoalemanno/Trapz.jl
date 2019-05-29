@@ -12,6 +12,8 @@ import Pkg; Pkg.pkg"add https://github.com/francescoalemanno/Trapz.jl"
 
 
 ```julia
+using Trapz
+
 vx=range(0,1,length=100)
 vy=range(0,2,length=200)
 vz=range(0,3,length=300)
