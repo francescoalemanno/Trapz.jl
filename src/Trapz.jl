@@ -1,6 +1,7 @@
 module Trapz
-
 export trapz
+
+
 @inline function bringlast(T::Tuple,el)
     ifelse(el==T[1],
         (bringlast(Base.tail(T),el)...,T[1]) ,
@@ -8,6 +9,32 @@ export trapz
     )
 end
 @inline function bringlast(T::Tuple{},el); T; end
+
+@inline function trapz_colon(k) Colon(); end
+@inline function idxlast(i,::Val{N}) where N; Base.tail((ntuple(trapz_colon,Val(N))...,i)) end
+
+
+function trapz(x::T1, y::T2) where {N,fT,T1<:AbstractVector{fT},T2<:AbstractArray{fT,N}}
+    n = length(x)
+    s = size(y)
+    @assert s[end]==n
+    @inbounds begin
+        r =  zeros(fT,Base.reverse(Base.tail(Base.reverse(s))))
+        if n == 1; return r; end
+        for i in 2:n-1
+           @fastmath r .+= (x[i+1] - x[i-1]) .* view(y,idxlast(i,Val(N))...)
+        end
+        r .+= (x[end]-x[end-1]) .* view(y,idxlast(n,Val(N))...) + (x[2] - x[1]).* view(y,idxlast(1,Val(N))...)
+        return r./2
+    end
+end
+
+function trapz(x::T1, y::T2, axis::T3) where {N,fT,T1<:AbstractVector{fT},T2<:AbstractArray{fT,N},T3<:Integer}
+    @assert 1<=axis<=N
+    trapz(x,PermutedDimsArray(y,bringlast(ntuple(identity,Val(N)),axis)))
+end
+
+
 """
     trapz(x,y,axis=End)
     Calculates ∫y[..., i (axis) ,...] dx[i]
@@ -29,26 +56,7 @@ end
 ```
         Result ≈ 4/3
 """
-function trapz(x::T1, y::T2) where {N,fT,T1<:AbstractVector{fT},T2<:AbstractArray{fT,N}}
-    n = length(x)
-    s = size(y)
-    @assert s[end]==n
-    @inbounds begin
-        r =  zeros(fT,Base.reverse(Base.tail(Base.reverse(s))))
-        id(i) = (ntuple(k->:,N-1)...,i)
-        if n == 1; return r; end
-        for i in 2:n-1
-           @fastmath r .+= (x[i+1] - x[i-1]) .* view(y,id(i)...)
-        end
-        r .+= (x[end]-x[end-1]) .* view(y,id(n)...) + (x[2] - x[1]).* view(y,id(1)...)
-        return r./2
-    end
-end
-
-function trapz(x::T1, y::T2, axis::T3) where {N,fT,T1<:AbstractVector{fT},T2<:AbstractArray{fT,N},T3<:Integer}
-    @assert 1<=axis<=N
-    trapz(x,PermutedDimsArray(y,bringlast(ntuple(identity,N),axis)))
-end
+trapz
 
 
 end # module
