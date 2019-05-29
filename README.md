@@ -7,6 +7,7 @@ the package is not registered on Julia Registry, so it can only be added as foll
 import Pkg; Pkg.pkg"add https://github.com/francescoalemanno/Trapz.jl"
 ```
 
+
 ## Example Usage:
 
 
@@ -30,51 +31,46 @@ M2=ones(100,3)
 
 
 ```julia
-@benchmark trapz($vy,$M,$(2))
+@benchmark trapz($vx,trapz($vy,trapz($vz,$M,$(3)),$(2)),$(1))
 ```
-
-    BenchmarkTools.Trial: 
-      memory estimate:  1.16 MiB
-      allocs estimate:  220
-      --------------
-      minimum time:     8.477 ms (0.00% GC)
-      median time:      8.595 ms (0.00% GC)
-      mean time:        8.709 ms (0.66% GC)
-      maximum time:     10.798 ms (10.34% GC)
-      --------------
-      samples:          574
-      evals/sample:     1
-
-```julia
-@benchmark trapz($vx,trapz($vy,trapz($vz,$M,3),2),1)
-```
-
     BenchmarkTools.Trial: 
       memory estimate:  819.89 KiB
       allocs estimate:  635
       --------------
-      minimum time:     6.700 ms (0.00% GC)
-      median time:      6.819 ms (0.00% GC)
-      mean time:        6.904 ms (0.63% GC)
-      maximum time:     9.999 ms (0.00% GC)
+      minimum time:     6.650 ms (0.00% GC)
+      median time:      6.777 ms (0.00% GC)
+      mean time:        6.845 ms (0.64% GC)
+      maximum time:     8.328 ms (13.97% GC)
       --------------
-      samples:          724
+      samples:          730
       evals/sample:     1
-
 ```julia
 @benchmark trapz($vx,trapz($vy,trapz($vz,$M)))
 ```
-
     BenchmarkTools.Trial: 
       memory estimate:  818.83 KiB
       allocs estimate:  614
       --------------
-      minimum time:     6.348 ms (0.00% GC)
-      median time:      6.501 ms (0.00% GC)
-      mean time:        6.666 ms (0.67% GC)
-      maximum time:     9.819 ms (12.43% GC)
+      minimum time:     6.321 ms (0.00% GC)
+      median time:      6.596 ms (0.00% GC)
+      mean time:        6.880 ms (0.64% GC)
+      maximum time:     12.562 ms (0.00% GC)
       --------------
-      samples:          749
+      samples:          726
+      evals/sample:     1
+```julia
+@benchmark trapz($vy,$M,$(2))
+```
+    BenchmarkTools.Trial: 
+      memory estimate:  1.16 MiB
+      allocs estimate:  220
+      --------------
+      minimum time:     8.253 ms (0.00% GC)
+      median time:      8.313 ms (0.00% GC)
+      mean time:        8.491 ms (0.64% GC)
+      maximum time:     15.538 ms (6.67% GC)
+      --------------
+      samples:          589
       evals/sample:     1
 
 ## Benchmark, when used inefficiently:
@@ -85,18 +81,22 @@ This code is optimized in order to perform the integral the fastest over the las
 ```julia
 @benchmark trapz($vz,trapz($vy,trapz($vx,$M,1),1),1)
 ```
-
     BenchmarkTools.Trial: 
       memory estimate:  2.33 MiB
       allocs estimate:  635
       --------------
-      minimum time:     59.702 ms (0.00% GC)
-      median time:      60.982 ms (0.00% GC)
-      mean time:        61.582 ms (0.20% GC)
-      maximum time:     69.332 ms (0.00% GC)
+      minimum time:     48.092 ms (0.00% GC)
+      median time:      48.965 ms (0.00% GC)
+      mean time:        49.400 ms (0.22% GC)
+      maximum time:     57.977 ms (0.00% GC)
       --------------
-      samples:          82
+      samples:          102
       evals/sample:     1
+```julia
+
+```
+
+
 ## Comparison to Numpy trapz
 At the time of writing this function when used correctly is faster than numpy's equivalent function.
 Indeed the timings for Anaconda Python 3.7.3 with Numpy 1.16.2 on the same machine with same initial conditions on M,x,y,z are:
