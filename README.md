@@ -1,6 +1,6 @@
 # Trapz.jl
 
-A simple Julia package to perform trapezoidal integration over common Julia arrays. 
+A simple Julia package to perform trapezoidal integration over common Julia arrays.
 
 the package is not registered on Julia Registry, so it can only be added as follows
 ```julia
@@ -35,7 +35,7 @@ M2=ones(100,3)
 ```julia
 @benchmark trapz($vx,trapz($vy,trapz($vz,$M,$(3)),$(2)),$(1))
 ```
-    BenchmarkTools.Trial: 
+    BenchmarkTools.Trial:
       memory estimate:  819.89 KiB
       allocs estimate:  635
       --------------
@@ -49,7 +49,7 @@ M2=ones(100,3)
 ```julia
 @benchmark trapz($vx,trapz($vy,trapz($vz,$M)))
 ```
-    BenchmarkTools.Trial: 
+    BenchmarkTools.Trial:
       memory estimate:  818.83 KiB
       allocs estimate:  614
       --------------
@@ -63,7 +63,7 @@ M2=ones(100,3)
 ```julia
 @benchmark trapz($vy,$M,$(2))
 ```
-    BenchmarkTools.Trial: 
+    BenchmarkTools.Trial:
       memory estimate:  1.16 MiB
       allocs estimate:  220
       --------------
@@ -83,7 +83,7 @@ This code is optimized in order to perform the integral the fastest over the las
 ```julia
 @benchmark trapz($vz,trapz($vy,trapz($vx,$M,1),1),1)
 ```
-    BenchmarkTools.Trial: 
+    BenchmarkTools.Trial:
       memory estimate:  2.33 MiB
       allocs estimate:  635
       --------------
@@ -94,9 +94,7 @@ This code is optimized in order to perform the integral the fastest over the las
       --------------
       samples:          102
       evals/sample:     1
-```julia
 
-```
 
 
 ## Comparison to Numpy trapz
@@ -112,6 +110,3 @@ np.trapz(np.trapz(np.trapz(M,x,axis=0),y,axis=0),z,axis=0)
 np.trapz(np.trapz(np.trapz(M,z,axis=2),y,axis=1),x,axis=0)
 ```
     74.7 ms ± 1.5 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
-```python
-
-```
