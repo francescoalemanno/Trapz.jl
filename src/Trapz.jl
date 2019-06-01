@@ -24,7 +24,7 @@ module Trapz
             for i in 2:n-1
                @fastmath r .+= (x[i+1] - x[i-1]) .* view(y,idxlast(i,Val(N))...)
             end
-            r .+= (x[end]-x[end-1]) .* view(y,idxlast(n,Val(N))...) + (x[2] - x[1]).* view(y,idxlast(1,Val(N))...)
+            r .+= (x[end]-x[end-1]) .* view(y,idxlast(n,Val(N))...) .+ (x[2] - x[1]).* view(y,idxlast(1,Val(N))...)
             return r./2
         end
     end
