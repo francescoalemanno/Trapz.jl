@@ -47,33 +47,101 @@ M2=ones(100,3)
       samples:          730
       evals/sample:     1
 ```julia
+
+# Trapz.jl
+
+A simple Julia package to perform trapezoidal integration over common Julia arrays.
+
+the package is not registered on Julia Registry, so it can only be added as follows
+```julia
+import Pkg; Pkg.pkg"add https://github.com/francescoalemanno/Trapz.jl"
+```
+
+
+## Example Usage:
+
+
+
+```julia
+using BenchmarkTools,Trapz
+vx=range(0,1,length=100)
+vy=range(0,2,length=200)
+vz=range(0,3,length=300)
+M=[x^2+y^2+z^2 for x=vx,y=vy,z=vz]
+@show trapz(vx,trapz(vy,trapz(vz,M)));
+
+```
+
+    trapz(vx, trapz(vy, trapz(vz, M))) = 28.00030370797026
+
+
+# Benchmarks
+
+
+```julia
 @benchmark trapz($vx,trapz($vy,trapz($vz,$M)))
 ```
+
+
+
+
     BenchmarkTools.Trial:
-      memory estimate:  818.83 KiB
-      allocs estimate:  614
+      memory estimate:  347.31 KiB
+      allocs estimate:  607
       --------------
-      minimum time:     6.321 ms (0.00% GC)
-      median time:      6.596 ms (0.00% GC)
-      mean time:        6.880 ms (0.64% GC)
-      maximum time:     12.562 ms (0.00% GC)
+      minimum time:     7.459 ms (0.00% GC)
+      median time:      7.657 ms (0.00% GC)
+      mean time:        7.720 ms (0.24% GC)
+      maximum time:     10.711 ms (0.00% GC)
       --------------
-      samples:          726
+      samples:          647
       evals/sample:     1
+
+
+
+
 ```julia
-@benchmark trapz($vy,$M,$(2))
+@benchmark trapz($vy,trapz($vz,$M))
 ```
+
+
+
+
     BenchmarkTools.Trial:
-      memory estimate:  1.16 MiB
-      allocs estimate:  220
+      memory estimate:  342.53 KiB
+      allocs estimate:  506
       --------------
-      minimum time:     8.253 ms (0.00% GC)
-      median time:      8.313 ms (0.00% GC)
-      mean time:        8.491 ms (0.64% GC)
-      maximum time:     15.538 ms (6.67% GC)
+      minimum time:     7.435 ms (0.00% GC)
+      median time:      7.681 ms (0.00% GC)
+      mean time:        7.743 ms (0.23% GC)
+      maximum time:     13.389 ms (0.00% GC)
       --------------
-      samples:          589
+      samples:          645
       evals/sample:     1
+
+
+
+
+```julia
+@benchmark trapz($vy,$M,2)
+```
+
+
+
+
+    BenchmarkTools.Trial:
+      memory estimate:  482.02 KiB
+      allocs estimate:  214
+      --------------
+      minimum time:     9.497 ms (0.00% GC)
+      median time:      9.763 ms (0.00% GC)
+      mean time:        9.991 ms (0.23% GC)
+      maximum time:     15.369 ms (0.00% GC)
+      --------------
+      samples:          501
+      evals/sample:     1
+
+
 
 ## Benchmark, when used inefficiently:
 
@@ -83,17 +151,22 @@ This code is optimized in order to perform the integral the fastest over the las
 ```julia
 @benchmark trapz($vz,trapz($vy,trapz($vx,$M,1),1),1)
 ```
+
+
+
+
     BenchmarkTools.Trial:
-      memory estimate:  2.33 MiB
-      allocs estimate:  635
+      memory estimate:  973.50 KiB
+      allocs estimate:  628
       --------------
-      minimum time:     48.092 ms (0.00% GC)
-      median time:      48.965 ms (0.00% GC)
-      mean time:        49.400 ms (0.22% GC)
-      maximum time:     57.977 ms (0.00% GC)
+      minimum time:     60.976 ms (0.00% GC)
+      median time:      63.567 ms (0.00% GC)
+      mean time:        65.852 ms (0.07% GC)
+      maximum time:     91.881 ms (0.00% GC)
       --------------
-      samples:          102
+      samples:          76
       evals/sample:     1
+
 
 
 
