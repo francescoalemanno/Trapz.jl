@@ -44,7 +44,7 @@ module Trapz
             @simd for i in 2:n-1
                @fastmath r .+= view(y,idxlast(i,Val(N))...)
             end
-        return dx.*(r .+ (view(y,idxlast(1,Val(N))...) .+ view(y,idxlast(n,Val(N))...))./2)
+            return dx.*(r .+ (view(y,idxlast(1,Val(N))...) .+ view(y,idxlast(n,Val(N))...))./2)
         end
     end
 
@@ -54,7 +54,7 @@ module Trapz
     end
 
     function trapz_even(x::T1, y::T2) where {N,fT,T1<:AbstractVector{fT},T2<:AbstractArray{fT,N}}
-            trapz_even(x[2]-x[1],y)
+        trapz_even(x[2]-x[1],y)
     end
 
     function trapz_even(x::T1, y::T2, axis::T3) where {N,fT,T1<:AbstractVector{fT},T2<:AbstractArray{fT,N},T3<:Integer}
