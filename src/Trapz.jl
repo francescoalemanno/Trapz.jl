@@ -1,5 +1,6 @@
 module Trapz
     export trapz
+    export trapz_even
 
 
     @inline function bringlast(T::Tuple,el)
