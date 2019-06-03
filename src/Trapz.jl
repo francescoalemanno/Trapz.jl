@@ -46,33 +46,6 @@ module Trapz
         @assert 1<=axis<=N
         trapz(x,PermutedDimsArray(y,bringlast(ntuple(identity,Val(N)),axis)))
     end
-    #BEGIN: 5 minutes patch, Need refactoring, code can be made compact
-    function trapz_even(dx::fT, y::T2) where {N,fT,T2<:AbstractArray{fT,N}}
-        s = size(y)
-        n = s[end]
-        @inbounds begin
-            r =  zeros(fT,Base.reverse(Base.tail(Base.reverse(s))))
-            if n == 1; return r.*zero(fT); end
-            @simd for i in 2:n-1
-               @fastmath r .+= view(y,idxlast(i,Val(N))...)
-            end
-            return dx.*(r .+ (view(y,idxlast(1,Val(N))...) .+ view(y,idxlast(n,Val(N))...))./2)
-        end
-    end
-
-    function trapz_even(dx::fT, y::T2, axis::T3) where {N,fT,T2<:AbstractArray{fT,N},T3<:Integer}
-        @assert 1<=axis<=N
-        trapz_even(dx,PermutedDimsArray(y,bringlast(ntuple(identity,Val(N)),axis)))
-    end
-
-    function trapz_even(x::T1, y::T2) where {N,fT,T1<:AbstractVector{fT},T2<:AbstractArray{fT,N}}
-        trapz_even(x[2]-x[1],y)
-    end
-
-    function trapz_even(x::T1, y::T2, axis::T3) where {N,fT,T1<:AbstractVector{fT},T2<:AbstractArray{fT,N},T3<:Integer}
-        @assert 1<=axis<=N
-        trapz_even(x,PermutedDimsArray(y,bringlast(ntuple(identity,Val(N)),axis)))
-    end
 
     """
         trapz(x,y,axis=End)
