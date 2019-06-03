@@ -27,13 +27,18 @@ module Trapz
         s = size(y)
         @assert s[end]==n
         @inbounds begin
-            r =  zeros(fT,Base.reverse(Base.tail(Base.reverse(s))))
-            if n == 1; return r.*zero(fT); end
+            r = similar(y,Base.reverse(Base.tail(Base.reverse(s))))
+            if n <= 1;
+                r.=zero(fT)
+                @goto retval;
+            end
+            @fastmath r .= (x[2] - x[1]) .* view(y,idxlast(1,Val(N))...)
             for i in 2:n-1
                @fastmath r .+= (x[i+1] - x[i-1]) .* view(y,idxlast(i,Val(N))...)
             end
-            r .+= (x[end]-x[end-1]) .* view(y,idxlast(n,Val(N))...) .+ (x[2] - x[1]).* view(y,idxlast(1,Val(N))...)
-            return r./2
+            @fastmath r .+= (x[end]-x[end-1]) .* view(y,idxlast(n,Val(N))...)
+            @label retval
+            return killzerodim(r./2)
         end
     end
 
