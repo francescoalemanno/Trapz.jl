@@ -72,3 +72,21 @@ module Trapz
 
 
 end # module
+
+
+#Some testing code
+# using BenchmarkTools,GPUArrays
+#
+# vx=range(0,1,length=100)
+# vy=vx.^2
+# My=[x^2+y^2 for x in vx,y in vx]
+# Ty=[x^2+y^2+z^2 for x in vx,y in vx,z in vx]
+#
+#
+# Main.Trapz.trapz(vx,JLArray(Ty))
+# Main.Trapz.trapz(vx,JLArray(My))
+# Main.Trapz.trapz(vx,JLArray(vy))
+# Main.Trapz.trapz(vx,My)
+# Main.Trapz.trapz(vx,Ty)
+# Main.Trapz.trapz(vx,vy)
+#
