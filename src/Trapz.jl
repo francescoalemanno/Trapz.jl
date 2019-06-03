@@ -13,8 +13,15 @@ module Trapz
 
     @inline function trapz_colon(k) Colon(); end
     @inline function idxlast(i,::Val{N}) where N; Base.tail((ntuple(trapz_colon,Val(N))...,i)) end
-
-
+    function killzerodim(A::AbstractArray{fT,0}) where fT
+        A[]
+    end
+    function killzerodim(A::AbstractArray{fT,N}) where {fT,N}
+        A
+    end
+    function killzerodim(A::fT) where {fT<:Number}
+        A
+    end
     function trapz(x::T1, y::T2) where {N,fT,T1<:AbstractVector{fT},T2<:AbstractArray{fT,N}}
         n = length(x)
         s = size(y)
