@@ -3,9 +3,9 @@
 
 A simple Julia package to perform trapezoidal integration over common Julia arrays.
 
-the package is not registered on Julia Registry, so it can only be added as follows
+the package is now registered on Julia Registry, so it can be added as follows
 ```julia
-import Pkg; Pkg.pkg"add https://github.com/francescoalemanno/Trapz.jl"
+import Pkg; Pkg.pkg"add Trapz"
 ```
 
 
