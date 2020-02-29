@@ -46,6 +46,25 @@ module Trapz
         trapz(x,PermutedDimsArray(y,bringlast(ntuple(identity,Val(N)),axis)))
     end
 
+    function gen_trapz_impl(xs::Type{T}, M) where T <: NTuple{N} where N
+        ex = :(trapz(xs[$N], M))
+        for i=(N-1):-1:1
+            ex = :(trapz(xs[$i],$ex))
+        end
+        return ex
+    end
+
+    @generated function trapz(xs::NTuple{N}, M) where N
+        return gen_trapz_impl(xs, M)
+    end
+
+    function trapz(xs::NTuple{N}, M::AbstractArray{T,S}, axes::NTuple{N}) where {N, T, S}
+        if S > N
+            axes = ((i for i=1:S if !in(i,axes))..., axes...)
+        end
+        trapz(xs, PermutedDimsArray(M, axes))
+    end
+
     """
         trapz(x,y,axis=End)
         Calculates ∫y[..., i (axis) ,...] dx[i]
@@ -63,7 +82,16 @@ module Trapz
         vx=0:0.01:1
         vy=0:0.01:2
         z=[x^2+y^2 for x=vx, y=vy]
-        trapz(trapz(vy,z),vx)
+        trapz((vx,vy),z) # equivalent to trapz(vx, trapz(vy, z))
+    ```
+            Result ≈ 4/3
+
+        2-D Example in reverse integration order:
+    ```julia
+        vx=0:0.01:1
+        vy=0:0.01:2
+        z=[x^2+y^2 for x=vx, y=vy]
+        trapz((vy,vx),z,(2,1)) # equivalent to trapz(vy, trapz(vx, z, 1), 1)
     ```
             Result ≈ 4/3
     """

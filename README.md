@@ -19,18 +19,18 @@ vx=range(0,1,length=100)
 vy=range(0,2,length=200)
 vz=range(0,3,length=300)
 M=[x^2+y^2+z^2 for x=vx,y=vy,z=vz]
-@show trapz(vx,trapz(vy,trapz(vz,M)));
+@show trapz((vx,vy,vz), M);
 
 ```
 
-    trapz(vx, trapz(vy, trapz(vz, M))) = 28.00030370797026
+    trapz((vx, vy, vz), M) = 28.000303707970264
 
 
 # Benchmarks
 
 
 ```julia
-@benchmark trapz($vx,trapz($vy,trapz($vz,$M)))
+@benchmark trapz(($vx,$vy,$vz),$M)
 ```
 
 
@@ -52,7 +52,7 @@ M=[x^2+y^2+z^2 for x=vx,y=vy,z=vz]
 
 
 ```julia
-@benchmark trapz($vy,trapz($vz,$M))
+@benchmark trapz(($vy, $vz),$M)
 ```
 
 
@@ -100,7 +100,7 @@ This code is optimized in order to perform the integral the fastest over the las
 
 
 ```julia
-@benchmark trapz($vz,trapz($vy,trapz($vx,$M,1),1),1)
+@benchmark trapz(($vz,$vy,$vx),$M,(3,2,1))
 ```
 
 
