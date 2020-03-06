@@ -1,4 +1,7 @@
 
+[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://pkg.julialang.org/docs/Trapz)
+
+
 # Trapz.jl
 
 A simple Julia package to perform trapezoidal integration over common Julia arrays.
