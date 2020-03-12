@@ -21,8 +21,7 @@ vx=range(0,1,length=100)
 vy=range(0,2,length=200)
 vz=range(0,3,length=300)
 M=[x^2+y^2+z^2 for x=vx,y=vy,z=vz]
-@show trapz((vx,vy,vz), M);
-
+@show trapz((vx,vy,vz), M) # = 28.000303707970264
 ```
 
     trapz((vx, vy, vz), M) = 28.000303707970264
@@ -30,109 +29,71 @@ M=[x^2+y^2+z^2 for x=vx,y=vy,z=vz]
 
 # Benchmarks
 
-
 ```julia
 @benchmark trapz(($vx,$vy,$vz),$M)
 ```
 
-
-
-
-    BenchmarkTools.Trial:
-      memory estimate:  347.31 KiB
-      allocs estimate:  607
-      --------------
-      minimum time:     7.459 ms (0.00% GC)
-      median time:      7.657 ms (0.00% GC)
-      mean time:        7.720 ms (0.24% GC)
-      maximum time:     10.711 ms (0.00% GC)
-      --------------
-      samples:          647
-      evals/sample:     1
-
-
-
+BenchmarkTools.Trial:
+  memory estimate:  347.31 KiB
+  allocs estimate:  607
+  --------------
+  minimum time:     4.564 ms (0.00% GC)
+  median time:      4.655 ms (0.00% GC)
+  mean time:        4.697 ms (0.13% GC)
+  maximum time:     7.193 ms (0.00% GC)
+  --------------
+  samples:          1064
+  evals/sample:     1
 
 ```julia
 @benchmark trapz(($vy, $vz),$M)
 ```
 
-
-
-
-    BenchmarkTools.Trial:
-      memory estimate:  342.53 KiB
-      allocs estimate:  506
-      --------------
-      minimum time:     7.435 ms (0.00% GC)
-      median time:      7.681 ms (0.00% GC)
-      mean time:        7.743 ms (0.23% GC)
-      maximum time:     13.389 ms (0.00% GC)
-      --------------
-      samples:          645
-      evals/sample:     1
-
-
-
+BenchmarkTools.Trial:
+  memory estimate:  342.53 KiB
+  allocs estimate:  506
+  --------------
+  minimum time:     4.600 ms (0.00% GC)
+  median time:      4.816 ms (0.00% GC)
+  mean time:        4.853 ms (0.12% GC)
+  maximum time:     6.019 ms (0.00% GC)
+  --------------
+  samples:          1030
+  evals/sample:     1
 
 ```julia
 @benchmark trapz($vy,$M,2)
 ```
 
-
-
-
-    BenchmarkTools.Trial:
-      memory estimate:  482.02 KiB
-      allocs estimate:  214
-      --------------
-      minimum time:     9.497 ms (0.00% GC)
-      median time:      9.763 ms (0.00% GC)
-      mean time:        9.991 ms (0.23% GC)
-      maximum time:     15.369 ms (0.00% GC)
-      --------------
-      samples:          501
-      evals/sample:     1
-
+BenchmarkTools.Trial:
+  memory estimate:  482.16 KiB
+  allocs estimate:  220
+  --------------
+  minimum time:     5.754 ms (0.00% GC)
+  median time:      5.943 ms (0.00% GC)
+  mean time:        5.988 ms (0.10% GC)
+  maximum time:     7.572 ms (0.00% GC)
+  --------------
+  samples:          834
+  evals/sample:     1
 
 
 ## Benchmark, when used inefficiently:
 
 This code is optimized in order to perform the integral the fastest over the last dimension first, here instead we are performing integral in opposite order e.g. first x, then y, at last over z
 
-
 ```julia
 @benchmark trapz(($vz,$vy,$vx),$M,(3,2,1))
 ```
 
-
-
-
-    BenchmarkTools.Trial:
-      memory estimate:  973.50 KiB
-      allocs estimate:  628
-      --------------
-      minimum time:     60.976 ms (0.00% GC)
-      median time:      63.567 ms (0.00% GC)
-      mean time:        65.852 ms (0.07% GC)
-      maximum time:     91.881 ms (0.00% GC)
-      --------------
-      samples:          76
-      evals/sample:     1
-
-
-
-
-## Comparison to Numpy trapz
-At the time of writing this function when used correctly is faster than numpy's equivalent function.
-Indeed the timings for Anaconda Python 3.7.3 with Numpy 1.16.2 on the same machine with same initial conditions on M,x,y,z are:
-```python
-%%timeit
-np.trapz(np.trapz(np.trapz(M,x,axis=0),y,axis=0),z,axis=0)
-```
-    59.3 ms ± 1.45 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
-```python
-%%timeit
-np.trapz(np.trapz(np.trapz(M,z,axis=2),y,axis=1),x,axis=0)
-```
-    74.7 ms ± 1.5 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+BenchmarkTools.Trial:
+  memory estimate:  973.13 KiB
+  allocs estimate:  617
+  --------------
+  minimum time:     26.366 ms (0.00% GC)
+  median time:      27.183 ms (0.00% GC)
+  mean time:        28.271 ms (0.05% GC)
+  maximum time:     43.117 ms (0.00% GC)
+  --------------
+  samples:          177
+  evals/sample:     1
