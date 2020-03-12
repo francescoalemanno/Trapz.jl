@@ -37,3 +37,6 @@ end
     I_x=trapz(vx, I_y)
     @test I_x ≈ res
 end
+@testset "Corner case of empty vector" begin
+    @test trapz(Float64[],Float64[]) == 0.0
+end
