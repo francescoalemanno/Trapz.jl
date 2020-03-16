@@ -4,21 +4,32 @@ module Trapz
     @inline function trapz_colon(k) Colon(); end
     @inline function idxlast(i,::Val{N}) where N; Base.tail((ntuple(trapz_colon,Val(N))...,i)) end
 
-    function trapz(x::T1, y::T2) where {N,fT,T1<:AbstractVector{fT},T2<:AbstractArray{fT,N}}
-        n = length(x)
-        s = size(y)
-        @assert s[end]==n
-        r = similar(y,Base.reverse(Base.tail(Base.reverse(s))))
-        n <= 1 && return r.*zero(fT)
-        @inbounds begin
-
-        @fastmath r .= (x[2] - x[1]) .* view(y,idxlast(1,Val(N))...)
-        for i in 2:n-1
-           @fastmath r .+= (x[i+1] - x[i-1]) .* view(y,idxlast(i,Val(N))...)
+    @generated function trapz(x::T1, y::T2) where {N,fT,T1<:AbstractVector{fT},T2<:AbstractArray{fT,N}}
+        ret=:(return r ./ 2)
+        if N==1
+            ret=:(return r[1]/2)
         end
-        @fastmath r .+= (x[end]-x[end-1]) .* view(y,idxlast(n,Val(N))...)
-        return r ./ 2
+        if N==0
+            ret=:(return zero(fT))
+        end
+        quote
+            n = length(x)
+            s = size(y)
+            @assert s[end]==n
+            r = similar(y,Base.reverse(Base.tail(Base.reverse(s))))
+            if n <= 1
+                r.=zero(fT)
+            else
+                @inbounds begin
+                @fastmath r .= (x[2] - x[1]) .* view(y,idxlast(1,Val(N))...)
+                for i in 2:n-1
+                   @fastmath r .+= (x[i+1] - x[i-1]) .* view(y,idxlast(i,Val(N))...)
+                end
+                @fastmath r .+= (x[end]-x[end-1]) .* view(y,idxlast(n,Val(N))...)
 
+                end
+            end
+            $(ret)
         end
     end
 
@@ -38,7 +49,7 @@ module Trapz
         trapz((x,),y,(axis,))
     end
 
-    @inline function trapz(xs::NTuple{N}, M::AbstractArray{T,S}, axes::NTuple{N}) where {N, T, S}
+    @inline function trapz(xs::NTuple{N}, M::CM, axes::NTuple{N}) where {N, T, S, CM <: AbstractArray{T,S}}
         if S > N
             axes = ((i for i=1:S if !in(i,axes))..., axes...)
         end
