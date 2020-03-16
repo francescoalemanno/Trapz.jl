@@ -4,7 +4,7 @@ module Trapz
     @inline function trapz_colon(k) Colon(); end
     @inline function idxlast(i,::Val{N}) where N; Base.tail((ntuple(trapz_colon,Val(N))...,i)) end
 
-    @generated function trapz(x::T1, y::T2) where {N,fT,T1<:AbstractVector{fT},T2<:AbstractArray{fT,N}}
+    @generated function trapz(x::T1, y::T2) where {N,N2,fT,T1<:AbstractArray{fT,N2},T2<:AbstractArray{fT,N}}
         ret=:(return r ./ 2)
         if N==1
             ret=:(return r[1]/2)
@@ -16,6 +16,7 @@ module Trapz
             n = length(x)
             s = size(y)
             @assert s[end]==n
+            @assert maximum(size(x))==n
             r = similar(y,Base.reverse(Base.tail(Base.reverse(s))))
             if n <= 1
                 r.=zero(fT)

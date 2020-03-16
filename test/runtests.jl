@@ -41,3 +41,6 @@ end
     @test trapz(Float64[],Float64[]) == 0.0
     @test trapz(Float64[1],Float64[1]) == 0.0
 end
+@testset "Integrate by reshaped vector" begin
+    trapz((1:10)',1:10)==trapz(1:10,1:10)
+end
