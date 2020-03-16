@@ -8,8 +8,8 @@ module Trapz
         n = length(x)
         s = size(y)
         @assert s[end]==n
-        n <= 1 && return zero(fT)
         r = similar(y,Base.reverse(Base.tail(Base.reverse(s))))
+        n <= 1 && return r.*zero(fT)
         @inbounds begin
 
         @fastmath r .= (x[2] - x[1]) .* view(y,idxlast(1,Val(N))...)
