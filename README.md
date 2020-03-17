@@ -83,17 +83,17 @@ M=[x^2+y^2+z^2 for x=vx,y=vy,z=vz]
 This code is optimized in order to perform the integral the fastest over the last dimension first, here instead we are performing integral in opposite order e.g. first x, then y, at last over z
 
 ```julia
-@benchmark trapz(($vz,$vy,$vx),$M,(3,2,1))
+@benchmark trapz(($vz,$vy,$vx),$M,$(3,2,1))
 ```
 
     BenchmarkTools.Trial:
       memory estimate:  973.14 KiB
       allocs estimate:  618
       --------------
-      minimum time:     25.125 ms (0.00% GC)
-      median time:      26.670 ms (0.00% GC)
-      mean time:        26.927 ms (0.07% GC)
-      maximum time:     30.580 ms (0.00% GC)
+      minimum time:     25.542 ms (0.00% GC)
+      median time:      27.284 ms (0.00% GC)
+      mean time:        27.444 ms (0.05% GC)
+      maximum time:     30.154 ms (0.00% GC)
       --------------
-      samples:          186
+      samples:          183
       evals/sample:     1
