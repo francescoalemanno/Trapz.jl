@@ -1,6 +1,6 @@
 module Trapz
     export trapz
-
+    include("tupletools.jl")
     @inline function trapz_colon(k) Colon(); end
     @inline function idxlast(i,::Val{N}) where N; Base.tail((ntuple(trapz_colon,Val(N))...,i)) end
 
@@ -17,7 +17,7 @@ module Trapz
             s = size(y)
             @assert s[end]==n
             @assert maximum(size(x))==n
-            r = similar(y,Base.reverse(Base.tail(Base.reverse(s))))
+            r = similar(y,rtail(s))
             if n <= 1
                 r.=zero(fT)
             else
@@ -27,34 +27,28 @@ module Trapz
                    @fastmath r .+= (x[i+1] - x[i-1]) .* view(y,idxlast(i,Val(N))...)
                 end
                 @fastmath r .+= (x[end]-x[end-1]) .* view(y,idxlast(n,Val(N))...)
-
                 end
             end
             $(ret)
         end
     end
 
-    @inline function gen_trapz_impl(xs::Type{T}, M) where T <: NTuple{N} where N
-        ex = :(trapz(xs[$N], M))
-        for i=(N-1):-1:1
-            ex = :(trapz(xs[$i],$ex))
-        end
-        return ex
+    @inline function trapz(xs::T, M) where {N,T<:NTuple{N}}
+        rM=trapz(last(xs),M)
+        return trapz(rtail(xs),rM)
     end
 
-    @inline @generated function trapz(xs::NTuple{N}, M) where N
-        return gen_trapz_impl(xs, M)
+    @inline function trapz(xs::T, M) where {N,T<:NTuple{0}}
+        return M
     end
 
     @inline function trapz(x, y, axis::Int)
         trapz((x,),y,(axis,))
     end
 
-    @inline function trapz(xs::NTuple{N}, M::CM, axes::NTuple{N}) where {N, T, S, CM <: AbstractArray{T,S}}
-        if S > N
-            axes = ((i for i=1:S if !in(i,axes))..., axes...)
-        end
-        trapz(xs, PermutedDimsArray(M, axes))
+    @inline function trapz(xs::NTuple{N}, M::CM, axes::NTuple{N,Int}) where {N, T, S, CM <: AbstractArray{T,S}}
+        permutation = getpermutation(M,axes)
+        trapz(xs, PermutedDimsArray(M, permutation))
     end
 
     """
