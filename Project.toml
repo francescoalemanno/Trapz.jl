@@ -1,7 +1,7 @@
 name = "Trapz"
 uuid = "592b5752-818d-11e9-1e9a-2b8ca4a44cd1"
 authors = ["Francesco Alemanno <francescoalemanno710@gmail.com>"]
-version = "1.2.1"
+version = "1.2.2"
 
 [compat]
 julia = "1"
