@@ -1,36 +1,40 @@
 module Trapz
     export trapz
-    include("tupletools.jl")
-    @inline function trapz_colon(k) Colon(); end
-    @inline function idxlast(i,::Val{N}) where N; Base.tail((ntuple(trapz_colon,Val(N))...,i)) end
 
-    @generated function trapz(x::T1, y::T2) where {N,N2,fT,T1<:AbstractArray{fT,N2},T2<:AbstractArray{fT,N}}
-        ret=:(return r ./ 2)
-        if N==1
-            ret=:(return r[1]/2)
+    include("tupletools.jl")
+
+    @inline function kernel_trapz(x::T1, y::T2) where {N,N2,fT<:Real,T1<:AbstractArray{fT,N2},T2<:AbstractArray{fT,N}}
+        n = length(x)
+        s = size(y)
+        @boundscheck begin
+            @assert s[end]==n "Integration axis over `y` is incompatible with `x`. Make sure their length match!"
+            @assert maximum(size(x))==n "`x` is not vector-like."
         end
-        if N==0
-            ret=:(return zero(fT))
+        r = similar(y,rtail(s))
+        if n <= 1
+            r.=zero(fT)
+            return r./2
         end
-        quote
-            n = length(x)
-            s = size(y)
-            @assert s[end]==n
-            @assert maximum(size(x))==n
-            r = similar(y,rtail(s))
-            if n <= 1
-                r.=zero(fT)
-            else
-                @inbounds begin
-                @fastmath r .= (x[2] - x[1]) .* view(y,idxlast(1,Val(N))...)
-                for i in 2:n-1
-                   @fastmath r .+= (x[i+1] - x[i-1]) .* view(y,idxlast(i,Val(N))...)
-                end
-                @fastmath r .+= (x[end]-x[end-1]) .* view(y,idxlast(n,Val(N))...)
-                end
+        @inbounds begin
+            @fastmath r .= (x[2] - x[1]) .* view(y,idxlast(1,Val(N))...)
+            for i in 2:n-1
+               @fastmath r .+= (x[i+1] - x[i-1]) .* view(y,idxlast(i,Val(N))...)
             end
-            $(ret)
+            @fastmath r .+= (x[end]-x[end-1]) .* view(y,idxlast(n,Val(N))...)
         end
+        r./2
+    end
+
+    function trapz(x::AbstractArray{T}, y::AT) where {T,AT<:AbstractArray{T,0}}
+        return zero(T)
+    end
+
+    function trapz(x::AbstractArray{T}, y::AT) where {T,AT<:AbstractVector{T}}
+        kernel_trapz(x, y)[1]
+    end
+
+    function trapz(x::AbstractArray{T}, y::AT) where {T,N,AT<:AbstractArray{T,N}}
+        kernel_trapz(x, y)
     end
 
     @inline function trapz(xs::T, M) where {N,T<:NTuple{N}}
