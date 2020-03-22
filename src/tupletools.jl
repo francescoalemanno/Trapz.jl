@@ -1,11 +1,3 @@
-@inline function trapz_colon(k)
-    Colon();
-end
-
-@inline function idxlast(i,::Val{N}) where N;
-    Base.tail((ntuple(trapz_colon,Val(N))...,i))
-end
-
 @inline function buildaxes(T::X,A) where {N,X <: NTuple{N}}
     h=first(T)
     t=Base.tail(T)

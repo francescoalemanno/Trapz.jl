@@ -43,6 +43,7 @@ end
 end
 
 @testset "Corner case of empty vector" begin
+    @test trapz(zeros(Float16,()),zeros(Float16,())) == 0.0
     @test trapz(Float64[],Float64[]) == 0.0
     @test trapz(Float64[1],Float64[1]) == 0.0
 end
