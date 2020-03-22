@@ -1,75 +1,45 @@
 module Trapz
     export trapz
 
-
     include("tupletools.jl")
-    @inline function kernel_trapz(x::V,y::M) where {Tm,Nm,M <: AbstractArray{Tm,Nm},Tv,Nv,V <: AbstractArray{Tv,Nv}}
-        kernel_trapz(x, y, IndexStyle(y))
-    end
 
-    @inline function kernel_trapz(x::T1, y::T2, ::IndexCartesian) where {N,N2,fT<:Real,T1<:AbstractArray{fT,N2},T2<:AbstractArray{fT,N}}
-        n = length(x)
-        s = size(y)
-        @boundscheck begin
-            @assert s[end]==n "Integration axis over `y` is incompatible with `x`. Make sure their length match!"
-            @assert maximum(size(x))==n "`x` is not vector-like."
-        end
-        r = similar(y,rtail(s))
-        if n <= 1
-            r.=zero(fT)
-            return r./2
-        end
-        @inbounds begin
-            @fastmath r .= (x[2] - x[1]) .* view(y,idxlast(1,Val(N))...)
-            for i in 2:n-1
-               @fastmath r .+= (x[i+1] - x[i-1]) .* view(y,idxlast(i,Val(N))...)
-            end
-            @fastmath r .+= (x[end]-x[end-1]) .* view(y,idxlast(n,Val(N))...)
-        end
-        r./2
-    end
-
-    import Base.strides
-    @inline function strides(x::T) where {T<:AbstractVector}
-        (1,)
-    end
-    function kernel_trapz(x::V,y::M, ::IndexLinear) where {Tm,Nm,M <: AbstractArray{Tm,Nm},Tv,Nv,V <: AbstractArray{Tv,Nv}}
+    @inline function kernel_trapz(x::V, y::M) where {Tm, Nm, M <: AbstractArray{Tm,Nm},Tv,Nv,V <: AbstractArray{Tv,Nv}}
         sy=size(y)
-        Tf=promote_type(Tm,Tv)
         N=length(x)
         @boundscheck begin
             @assert sy[Nm]==N "Integration axis over `y` is incompatible with `x`. Make sure their length match!"
             @assert maximum(size(x))==N "`x` is not vector-like."
         end
-        d_idx=stride(y,Nm)
-        res_size=Base.reverse(Base.tail(Base.reverse(sy)))
-        res=zeros(Tf,res_size)
-        @boundscheck N <= 1 && return res
+        res=zeros(promote_type(Tm,Tv),rtail(sy))
+        N <= 1 && return res
+        @simd for ids in CartesianIndices(res)
+            @inbounds res[ids]+=(x[2]-x[1])*y[Tuple(ids)...,1]
+        end
         for i in 2:(N-1)
-            @simd for ids in eachindex(res)
-                @inbounds res[ids]+=(x[i+1]-x[i-1])*y[ids+d_idx*(i-1)]
+            @simd for ids in CartesianIndices(res)
+                @inbounds res[ids]+=(x[i+1]-x[i-1])*y[Tuple(ids)...,i]
             end
         end
-        @simd for ids in eachindex(res)
-            @inbounds res[ids]+=(x[2]-x[1])*y[ids+d_idx*(1-1)]+(x[end]-x[end-1])*y[ids+d_idx*(N-1)]
+        @simd for ids in CartesianIndices(res)
+            @inbounds res[ids]+=(x[end]-x[end-1])*y[Tuple(ids)...,N]
         end
         res./2
     end
 
-    function trapz(x::AbstractArray{T}, y::AT) where {T,AT<:AbstractArray{T,0}}
-        return zero(T)
+    function trapz(x::AbstractArray{S}, y::AT) where {S,T,AT<:AbstractArray{T,0}}
+        return zero(promote_type(T,S))
     end
 
-    function trapz(x::AbstractArray{T}, y::AT) where {T,AT<:AbstractVector{T}}
+    function trapz(x::AbstractArray, y::AT) where {T,AT<:AbstractVector{T}}
         kernel_trapz(x, y)[1]
     end
 
-    function trapz(x::AbstractArray{T}, y::AT) where {T,N,AT<:AbstractArray{T,N}}
+    function trapz(x::AbstractArray, y::AT) where {T,N,AT<:AbstractArray{T,N}}
         kernel_trapz(x, y)
     end
 
     @inline function trapz(xs::T, M) where {N,T<:NTuple{N}}
-        return trapz(rtail(xs),trapz(last(xs),M))
+        return trapz(rtail(xs),@inbounds trapz(last(xs),M))
     end
 
     @inline function trapz(xs::T, M) where {N,T<:NTuple{0}}
@@ -80,7 +50,7 @@ module Trapz
         trapz((x,),y,(axis,))
     end
 
-    @inline function trapz(xs::NTuple{N}, M::CM, axes::NTuple{N,Int}) where {N, T, S, CM <: AbstractArray{T,S}}
+    @inline function trapz(xs::NTuple{N}, M, axes::NTuple{N,Int}) where N
         permutation = getpermutation(M,axes)
         trapz(xs, PermutedDimsArray(M, permutation))
     end
