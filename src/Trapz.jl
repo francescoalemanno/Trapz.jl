@@ -1,9 +1,13 @@
 module Trapz
     export trapz
 
-    include("tupletools.jl")
 
-    @inline function kernel_trapz(x::T1, y::T2) where {N,N2,fT<:Real,T1<:AbstractArray{fT,N2},T2<:AbstractArray{fT,N}}
+    include("tupletools.jl")
+    @inline function kernel_trapz(x::V,y::M) where {Tm,Nm,M <: AbstractArray{Tm,Nm},Tv,Nv,V <: AbstractArray{Tv,Nv}}
+        kernel_trapz(x, y, IndexStyle(y))
+    end
+
+    @inline function kernel_trapz(x::T1, y::T2, ::IndexCartesian) where {N,N2,fT<:Real,T1<:AbstractArray{fT,N2},T2<:AbstractArray{fT,N}}
         n = length(x)
         s = size(y)
         @boundscheck begin
@@ -25,6 +29,33 @@ module Trapz
         r./2
     end
 
+    import Base.strides
+    @inline function strides(x::T) where {T<:AbstractVector}
+        (1,)
+    end
+    function kernel_trapz(x::V,y::M, ::IndexLinear) where {Tm,Nm,M <: AbstractArray{Tm,Nm},Tv,Nv,V <: AbstractArray{Tv,Nv}}
+        sy=size(y)
+        Tf=promote_type(Tm,Tv)
+        N=length(x)
+        @boundscheck begin
+            @assert sy[Nm]==N "Integration axis over `y` is incompatible with `x`. Make sure their length match!"
+            @assert maximum(size(x))==N "`x` is not vector-like."
+        end
+        d_idx=stride(y,Nm)
+        res_size=Base.reverse(Base.tail(Base.reverse(sy)))
+        res=zeros(Tf,res_size)
+        @boundscheck N <= 1 && return res
+        for i in 2:(N-1)
+            @simd for ids in eachindex(res)
+                @inbounds res[ids]+=(x[i+1]-x[i-1])*y[ids+d_idx*(i-1)]
+            end
+        end
+        @simd for ids in eachindex(res)
+            @inbounds res[ids]+=(x[2]-x[1])*y[ids+d_idx*(1-1)]+(x[end]-x[end-1])*y[ids+d_idx*(N-1)]
+        end
+        res./2
+    end
+
     function trapz(x::AbstractArray{T}, y::AT) where {T,AT<:AbstractArray{T,0}}
         return zero(T)
     end
@@ -38,8 +69,7 @@ module Trapz
     end
 
     @inline function trapz(xs::T, M) where {N,T<:NTuple{N}}
-        rM=trapz(last(xs),M)
-        return trapz(rtail(xs),rM)
+        return trapz(rtail(xs),trapz(last(xs),M))
     end
 
     @inline function trapz(xs::T, M) where {N,T<:NTuple{0}}

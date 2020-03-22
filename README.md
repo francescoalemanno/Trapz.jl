@@ -34,15 +34,15 @@ M=[x^2+y^2+z^2 for x=vx,y=vy,z=vz]
 ```
 
     BenchmarkTools.Trial:
-      memory estimate:  347.33 KiB
-      allocs estimate:  608
+      memory estimate:  314.52 KiB
+      allocs estimate:  8
       --------------
-      minimum time:     4.474 ms (0.00% GC)
-      median time:      4.622 ms (0.00% GC)
-      mean time:        4.679 ms (0.09% GC)
-      maximum time:     6.431 ms (0.00% GC)
+      minimum time:     3.092 ms (0.00% GC)
+      median time:      3.325 ms (0.00% GC)
+      mean time:        3.361 ms (0.13% GC)
+      maximum time:     5.472 ms (26.43% GC)
       --------------
-      samples:          1068
+      samples:          1487
       evals/sample:     1
 
 ```julia
@@ -50,15 +50,15 @@ M=[x^2+y^2+z^2 for x=vx,y=vy,z=vz]
 ```
 
     BenchmarkTools.Trial:
-      memory estimate:  342.53 KiB
-      allocs estimate:  506
+      memory estimate:  314.41 KiB
+      allocs estimate:  6
       --------------
-      minimum time:     4.466 ms (0.00% GC)
-      median time:      4.555 ms (0.00% GC)
-      mean time:        4.589 ms (0.09% GC)
-      maximum time:     5.859 ms (0.00% GC)
+      minimum time:     3.141 ms (0.00% GC)
+      median time:      3.308 ms (0.00% GC)
+      mean time:        3.323 ms (0.07% GC)
+      maximum time:     3.848 ms (0.00% GC)
       --------------
-      samples:          1089
+      samples:          1504
       evals/sample:     1
 
 ```julia
@@ -69,12 +69,12 @@ M=[x^2+y^2+z^2 for x=vx,y=vy,z=vz]
       memory estimate:  481.98 KiB
       allocs estimate:  213
       --------------
-      minimum time:     5.804 ms (0.00% GC)
-      median time:      5.965 ms (0.00% GC)
-      mean time:        5.977 ms (0.08% GC)
-      maximum time:     7.685 ms (0.00% GC)
+      minimum time:     5.725 ms (0.00% GC)
+      median time:      5.862 ms (0.00% GC)
+      mean time:        5.891 ms (0.09% GC)
+      maximum time:     8.389 ms (0.00% GC)
       --------------
-      samples:          836
+      samples:          848
       evals/sample:     1
 
 
@@ -87,13 +87,13 @@ This code is optimized in order to perform the integral the fastest over the las
 ```
 
     BenchmarkTools.Trial:
-      memory estimate:  973.14 KiB
-      allocs estimate:  618
+      memory estimate:  949.70 KiB
+      allocs estimate:  118
       --------------
-      minimum time:     25.542 ms (0.00% GC)
-      median time:      27.284 ms (0.00% GC)
-      mean time:        27.444 ms (0.05% GC)
-      maximum time:     30.154 ms (0.00% GC)
+      minimum time:     25.426 ms (0.00% GC)
+      median time:      27.222 ms (0.00% GC)
+      mean time:        27.381 ms (0.03% GC)
+      maximum time:     29.378 ms (0.00% GC)
       --------------
       samples:          183
       evals/sample:     1

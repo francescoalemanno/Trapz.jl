@@ -48,7 +48,7 @@ end
 end
 
 @testset "Integrate by reshaped vector" begin
-    @test trapz((1:10)',1:10)==trapz(1:10,1:10)
+    @test trapz((1.0:10.0)',1.0:10.0)==trapz(1.0:10.0,1.0:10.0)
 end
 
 @testset "Some Inference Tests" begin
