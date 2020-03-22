@@ -30,35 +30,35 @@ M=[x^2+y^2+z^2 for x=vx,y=vy,z=vz]
 # Benchmarks
 
 ```julia
-@benchmark trapz(($vx,$vy,$vz),$M)
+@benchmark trapz($(vx,vy,vz),$M)
 ```
 
     BenchmarkTools.Trial:
       memory estimate:  314.52 KiB
       allocs estimate:  8
       --------------
-      minimum time:     3.092 ms (0.00% GC)
-      median time:      3.325 ms (0.00% GC)
-      mean time:        3.361 ms (0.13% GC)
-      maximum time:     5.472 ms (26.43% GC)
+      minimum time:     3.001 ms (0.00% GC)
+      median time:      3.111 ms (0.00% GC)
+      mean time:        3.158 ms (0.07% GC)
+      maximum time:     4.175 ms (0.00% GC)
       --------------
-      samples:          1487
+      samples:          1582
       evals/sample:     1
 
 ```julia
-@benchmark trapz(($vy, $vz),$M)
+@benchmark trapz($(vy, vz),$M)
 ```
 
     BenchmarkTools.Trial:
       memory estimate:  314.41 KiB
       allocs estimate:  6
       --------------
-      minimum time:     3.141 ms (0.00% GC)
-      median time:      3.308 ms (0.00% GC)
-      mean time:        3.323 ms (0.07% GC)
-      maximum time:     3.848 ms (0.00% GC)
+      minimum time:     3.062 ms (0.00% GC)
+      median time:      3.122 ms (0.00% GC)
+      mean time:        3.159 ms (0.08% GC)
+      maximum time:     4.392 ms (0.00% GC)
       --------------
-      samples:          1504
+      samples:          1582
       evals/sample:     1
 
 ```julia
@@ -66,15 +66,15 @@ M=[x^2+y^2+z^2 for x=vx,y=vy,z=vz]
 ```
 
     BenchmarkTools.Trial:
-      memory estimate:  481.98 KiB
-      allocs estimate:  213
+      memory estimate:  469.48 KiB
+      allocs estimate:  13
       --------------
-      minimum time:     5.725 ms (0.00% GC)
-      median time:      5.862 ms (0.00% GC)
-      mean time:        5.891 ms (0.09% GC)
-      maximum time:     8.389 ms (0.00% GC)
+      minimum time:     4.115 ms (0.00% GC)
+      median time:      4.192 ms (0.00% GC)
+      mean time:        4.215 ms (0.09% GC)
+      maximum time:     4.781 ms (0.00% GC)
       --------------
-      samples:          848
+      samples:          1185
       evals/sample:     1
 
 
@@ -83,17 +83,17 @@ M=[x^2+y^2+z^2 for x=vx,y=vy,z=vz]
 This code is optimized in order to perform the integral the fastest over the last dimension first, here instead we are performing integral in opposite order e.g. first x, then y, at last over z
 
 ```julia
-@benchmark trapz(($vz,$vy,$vx),$M,$(3,2,1))
+@benchmark trapz($(vz,vy,vx),$M,$(3,2,1))
 ```
 
     BenchmarkTools.Trial:
-      memory estimate:  949.70 KiB
-      allocs estimate:  118
+      memory estimate:  943.45 KiB
+      allocs estimate:  18
       --------------
-      minimum time:     25.426 ms (0.00% GC)
-      median time:      27.222 ms (0.00% GC)
-      mean time:        27.381 ms (0.03% GC)
-      maximum time:     29.378 ms (0.00% GC)
+      minimum time:     26.700 ms (0.00% GC)
+      median time:      28.650 ms (0.00% GC)
+      mean time:        28.794 ms (0.03% GC)
+      maximum time:     34.034 ms (0.00% GC)
       --------------
-      samples:          183
+      samples:          174
       evals/sample:     1
