@@ -1,0 +1,64 @@
+@inline function putindex(ids::NTuple{N,T},val_axis::Val{axis},i::T) where {T,N,axis}
+    @inbounds A=ntuple(i->ids[i],Val(axis-1))
+    @inbounds B=ntuple(i->ids[i+axis-1],Val(N-axis+1))
+    (A...,i,B...)
+end
+
+@inline function extrudeindex(ids::NTuple{N},val_axis::Val{axis}) where {N,axis}
+    @inbounds A=ntuple(i->ids[i],Val(axis-1))
+    @inbounds B=ntuple(i->ids[i+axis],Val(N-axis))
+    (A...,B...)
+end
+
+@inline function purge(x::R) where {N,T,R<:AbstractArray{T,N}}
+    x
+end
+@inline function purge(x::R) where {T,R<:AbstractArray{T,0}}
+    x[]
+end
+@inline function integrate(x::V, y::M, val_axis::Val{axis}) where {axis,Tm, Nm, M <: AbstractArray{Tm,Nm},Tv,Nv,V <: AbstractArray{Tv,Nv}}
+    sy=size(y)
+    N=length(x)
+    @boundscheck begin
+        @assert sy[axis]==N "Integration axis over `y` is incompatible with `x`. Make sure their length match!"
+        @assert maximum(size(x))==N "`x` is not vector-like."
+    end
+    res=zeros(promote_type(Tm,Tv),extrudeindex(sy,val_axis))
+    @inline idx(I,j) = CartesianIndex(putindex(Tuple(I),val_axis,j))
+    N <= 1 && return purge(res)
+    @simd for ids in CartesianIndices(res)
+        @inbounds res[ids]+=(x[2]-x[1])*y[idx(ids,1)]
+    end
+    for i in 2:(N-1)
+        @simd for ids in CartesianIndices(res)
+            @inbounds res[ids]+=(x[i+1]-x[i-1])*y[idx(ids,i)]
+        end
+    end
+    @simd for ids in CartesianIndices(res)
+        @inbounds res[ids]+=(x[end]-x[end-1])*y[idx(ids,N)]
+    end
+    @simd for ids in eachindex(res)
+        @inbounds res[ids]/=2
+    end
+    purge(res)
+end
+
+@inline function integrate(x::Colon, y,a)
+    y
+end
+function integrate(x::AbstractArray{S}, y::AT) where {S,T,AT<:AbstractArray{T,0}}
+    return zero(promote_type(T,S))
+end
+
+@inline @generated function integrate(x::NTuple{N,Union{Colon,AbstractArray}}, y::M) where {Tm, N, M <: AbstractArray{Tm,N}}
+    axis=ntuple(i->Val(i),Val(N))
+    I=:(y)
+    for i in N:-1:1
+        I=:(integrate(x[$i],$I,$(axis[i])))
+    end
+    I
+end
+
+@inline function integrate(x::V, y::M) where {Tv, Nv, V <: AbstractArray{Tv,Nv} ,Tm, Nm, M <: AbstractArray{Tm,Nm}}
+    integrate(x,y,Val(Nm))
+end
