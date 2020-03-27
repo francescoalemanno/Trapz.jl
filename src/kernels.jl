@@ -62,3 +62,32 @@ end
 @inline function integrate(x::V, y::M) where {Tv, Nv, V <: AbstractArray{Tv,Nv} ,Tm, Nm, M <: AbstractArray{Tm,Nm}}
     integrate(x,y,Val(Nm))
 end
+
+
+"""
+
+    @integrate range variable expression
+Calculates integral of [expression] over [variable] in [range]
+
+#### Example
+julia> @integrate 0:0.01:1 x x*x
+
+0.33335
+
+"""
+macro integrate(range,var,expr)
+    quote
+        let
+        local r=$(esc(range))
+        N=length(r)
+        @assert N>=2 "null integration range"
+        @inline f($(esc(var)))=$(esc(expr))
+        local t = (r[2]-r[1])*f(r[1])
+        for i in 2:(N-1)
+            t+=f(r[i])*(r[i+1]-r[i-1])
+        end
+        t += (r[end]-r[end-1])*f(r[end])
+        t/2
+        end
+    end
+end

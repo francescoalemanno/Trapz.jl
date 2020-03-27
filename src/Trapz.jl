@@ -1,5 +1,5 @@
 module Trapz
-    export trapz
+    export trapz, @integrate
 
     include("kernels.jl")
 
