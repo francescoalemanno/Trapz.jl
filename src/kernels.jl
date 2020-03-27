@@ -82,12 +82,12 @@ macro integrate(range,var,expr)
         N=length(r)
         @assert N>=2 "null integration range"
         @inline f($(esc(var)))=$(esc(expr))
-        local t = (r[2]-r[1])*f(r[1])
+        local t = (r[2].-r[1]).*f(r[1])
         for i in 2:(N-1)
-            t+=f(r[i])*(r[i+1]-r[i-1])
+            t=t .+ f(r[i]).*(r[i+1].-r[i-1])
         end
-        t += (r[end]-r[end-1])*f(r[end])
-        t/2
+        t = t .+ (r[end].-r[end-1]).*f(r[end])
+        t./2
         end
     end
 end
