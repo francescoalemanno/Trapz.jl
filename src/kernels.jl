@@ -66,11 +66,11 @@ end
 
 """
 
-    @integrate range variable expression
+    @trapz range variable expression
 Calculates integral of [expression] over [variable] in [range]
 
 #### Example
-julia> @integrate 0:0.01:1 x x*x
+julia> @trapz 0:0.01:1 x x*x
 
 0.33335
 
