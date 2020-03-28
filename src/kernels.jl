@@ -75,18 +75,20 @@ julia> @integrate 0:0.01:1 x x*x
 0.33335
 
 """
-macro integrate(range,var,expr)
+macro trapz(range,var,expr)
     quote
         let
         local r=$(esc(range))
         N=length(r)
         @assert N>=2 "null integration range"
         @inline f($(esc(var)))=$(esc(expr))
-        local t = (r[2].-r[1]).*f(r[1])
-        for i in 2:(N-1)
-            t=t .+ f(r[i]).*(r[i+1].-r[i-1])
+        @inbounds begin
+            local t = (r[2].-r[1]).*f(r[1])
+            @simd for i in 2:(N-1)
+                t=t .+ f(r[i]).*(r[i+1].-r[i-1])
+            end
+            t = t .+ (r[end].-r[end-1]).*f(r[end])
         end
-        t = t .+ (r[end].-r[end-1]).*f(r[end])
         t./2
         end
     end

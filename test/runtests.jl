@@ -60,10 +60,10 @@ end
     @test typeof(trapz(args...))==Base.return_types(trapz,typeof.(args))[1]
 end
 
-@testset "@integrate macro" begin
-    r=@integrate vx x begin
-        @integrate vy y begin
-            @integrate vz z begin
+@testset "@trapz macro" begin
+    r=@trapz vx x begin
+        @trapz vy y begin
+            @trapz vz z begin
                 x*x+y*y+z*z
             end
         end
