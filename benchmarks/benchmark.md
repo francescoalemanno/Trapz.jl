@@ -16,7 +16,7 @@ Pkg.pkg"add Trapz"
 
 
 
-## Example Usage:
+## Main Usage Example:
 
 ````julia
 using Trapz
@@ -165,5 +165,3 @@ print("Trapz.jl is ~ ",how_faster," times faster than numpy's trapz")
 ````
 Trapz.jl is ~ 7.34493 times faster than numpy's trapz
 ````
-
-

@@ -12,7 +12,7 @@ Pkg.pkg"add Trapz"
 ```
 
 
-## Example Usage:
+## Main Usage Example:
 
 ```julia
 using Trapz
