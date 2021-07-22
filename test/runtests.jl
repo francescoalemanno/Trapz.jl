@@ -1,5 +1,7 @@
 using Test
 using Trapz
+using Unitful
+
 @info "Started Package Testing"
 vx=range(0,1,length=5)
 vy=range(0,2,length=10)
@@ -69,4 +71,14 @@ end
         end
     end
     @test r≈res
+end
+
+# test whether units work, which requires proper type information to be
+# applied to the output arrays
+@testset "units" begin
+    x=(1:10)u"m"
+    y=range(-0.1, 10, length=length(x))u"J/m"
+    res = trapz(x, y)
+    @test unit(res) == u"J"
+    @test res ≈ 44.55u"J"
 end
