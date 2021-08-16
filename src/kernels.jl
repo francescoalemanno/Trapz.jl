@@ -23,7 +23,8 @@ end
         @assert sy[axis]==N "Integration axis over `y` is incompatible with `x`. Make sure their length match!"
         @assert maximum(size(x))==N "`x` is not vector-like."
     end
-    res=zeros(promote_type(Tm,Tv),extrudeindex(sy,val_axis))
+    out_type = typeof(oneunit(Tm) * oneunit(Tv))
+    res=zeros(out_type,extrudeindex(sy,val_axis))
     @inline idx(I,j) = CartesianIndex(putindex(Tuple(I),val_axis,j))
     N <= 1 && return purge(res)
     @simd for ids in CartesianIndices(res)
