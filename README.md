@@ -1,9 +1,8 @@
 # Trapz.jl
 A simple Julia package to perform trapezoidal integration over common Julia arrays.
 
-[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://pkg.julialang.org/docs/Trapz)
-[![Build Status](https://travis-ci.com/francescoalemanno/Trapz.jl.svg?branch=master)](https://travis-ci.com/francescoalemanno/Trapz.jl)
-[![codecov](https://codecov.io/gh/francescoalemanno/Trapz.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/francescoalemanno/Trapz.jl)
+[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliahub.com/docs/Trapz/ze2sm/)
+[![CI](https://github.com/francescoalemanno/Trapz.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/francescoalemanno/Trapz.jl/actions/workflows/ci.yml)
 
 the package is now registered on Julia Registry, so it can be added as follows
 ````julia
