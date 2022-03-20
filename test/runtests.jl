@@ -82,3 +82,11 @@ end
     @test unit(res) == u"J"
     @test res ≈ 44.55u"J"
 end
+
+@testset "missing" begin
+    x=1:10
+    y=vcat(1:2,missing,4:10)
+    @test ismissing(trapz(x, y))
+    @test ismissing(trapz(y, x))
+    @test ismissing(trapz(y, y))
+end

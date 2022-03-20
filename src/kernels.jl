@@ -24,6 +24,10 @@ end
         @assert maximum(size(x))==N "`x` is not vector-like."
     end
     out_type = typeof(oneunit(Tm) * oneunit(Tv))
+    if Missing <: Tv || Missing <: Tm
+        out_type = Union{Missing,out_type}
+    end
+    out_type
     res=zeros(out_type,extrudeindex(sy,val_axis))
     @inline idx(I,j) = CartesianIndex(putindex(Tuple(I),val_axis,j))
     N <= 1 && return purge(res)
