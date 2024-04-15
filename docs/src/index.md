@@ -7,3 +7,7 @@ arrays.
 ```@docs
 trapz
 ```
+
+```@docs
+@trapz
+```
