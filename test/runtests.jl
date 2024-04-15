@@ -1,6 +1,11 @@
 using Test
+using Documenter
 using Trapz
 using Unitful
+
+@info "Doing doctesting"
+DocMeta.setdocmeta!(Trapz, :DocTestSetup, :(using Trapz); recursive=true)
+doctest(Trapz)
 
 @info "Started Package Testing"
 vx=range(0,1,length=5)
