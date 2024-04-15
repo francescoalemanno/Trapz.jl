@@ -5,8 +5,7 @@ A simple Julia package to perform trapezoidal integration over common Julia arra
 [![CI](https://github.com/francescoalemanno/Trapz.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/francescoalemanno/Trapz.jl/actions/workflows/ci.yml)
 
 the package is now registered on Julia Registry, so it can be added as follows
-````julia-repl
-
+````julia
 julia> import Pkg
 julia> Pkg.add("Trapz")
 ````
@@ -15,7 +14,7 @@ julia> Pkg.add("Trapz")
 
 ## Main Usage Example:
 
-````julia-repl
+````julia
 julia> using Trapz
 
 julia> vx = range(0, 1, length=100);
@@ -33,7 +32,7 @@ julia> trapz((vx,vy,vz), M)
 
 ## Example Usage of `@trapz` macro:
 
-````julia-repl
+````julia
 julia> using Trapz
 
 julia> using Printf
@@ -59,7 +58,7 @@ julia> test(2.0)
 
 # Benchmarks
 
-````julia-repl
+````julia
 julia> using BenchmarkTools, Trapz
 
 julia> vx = range(0, 1, length=100);
@@ -104,7 +103,7 @@ julia> @btime integr($vx,$vy,$vz)
 
 # Comparison to Numpy
 
-````julia-repl
+````julia
 julia> using PyCall, BenchmarkTools, Trapz, Printf
 julia> np = pyimport("numpy")
 
