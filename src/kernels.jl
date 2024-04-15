@@ -71,10 +71,10 @@ end
 Calculates integral of [expression] over [variable] in [range]
 
 #### Example
+```jldoctest
 julia> @trapz 0:0.01:1 x x*x
-
 0.33335
-
+```
 """
 macro trapz(range,var,expr)
     quote
